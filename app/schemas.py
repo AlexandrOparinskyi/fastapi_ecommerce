@@ -10,6 +10,6 @@ class CreateProduct(BaseModel):
     category: int
 
 
-class CreateCategory:
+class CreateCategory(BaseModel):
     name: str
-    parent_id: int
+    parent_id: int | None
