@@ -5,9 +5,9 @@ class CreateProduct(BaseModel):
     name: str
     description: str
     price: int
-    image_url: str
+    image_url: str | None
     stock: int
-    category: int
+    category_id: int | None
 
 
 class CreateCategory(BaseModel):
