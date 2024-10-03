@@ -59,7 +59,8 @@ async def add_review(db: Annotated[AsyncSession, Depends(get_db)],
                                                product_id=create_review.product_id,
                                                comment=create_review.comment,
                                                rating_id=rating.scalar()))
-        rating_for_product = await db.scalars(select(Rating).where(Rating.product_id == create_review.product_id))
+        rating_for_product = await db.scalars(select(Rating).where(Rating.product_id == create_review.product_id
+                                                                   and Rating.is_active == True))
         await db.execute(update(Product).where(Product.id == create_review.product_id).values(
             rating=statistics.mean([i.grade for i in rating_for_product.all()])
         ))
@@ -88,7 +89,8 @@ async def delete_review(db: Annotated[AsyncSession, Depends(get_db)],
             )
         rating = await db.execute(update(Review).where(Review.id == review_id).values(is_active=False).returning(text('rating_id')))
         await db.execute(update(Rating).where(Rating.id == rating.scalar()).values(is_active=False))
-        rating_for_product = await db.scalars(select(Rating).where(Rating.product_id == product_id))
+        rating_for_product = await db.scalars(select(Rating).where(Rating.product_id == product_id
+                                                                   and Rating.is_active == True))
         await db.execute(update(Product).where(Product.id == product_id).values(
             rating=statistics.mean([i.grade for i in rating_for_product.all()])
         ))
